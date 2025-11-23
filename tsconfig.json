@@ -41,7 +41,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowJs": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
-  "exclude": ["eslint.config.ts", "generated", "dist", "node_modules"]
+  "exclude": ["eslint.config.ts", "prisma.config.ts", "dist", "node_modules"]
 }

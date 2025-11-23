@@ -6,9 +6,90 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
+enum EventStatus {
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+// enum MediaType {
+//   IMAGE
+//   VIDEO
+//   DOCUMENT
+//   AUDIO
+//   OTHER
+// }
+
+model Event {
+  id            String           @id @default(uuid())
+  title         String
+  description   String
+  status        EventStatus      @default(SCHEDULED)
+  startDate     DateTime         @map("start_date")
+  endDate       DateTime         @map("end_date")
+  location      String?
+  featuredImage String?          @map("featured_image")
+  images        String[]         @default([])
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+  eventTypeId   String           @unique @map("event_type_id")
+  eventType     EventType        @relation(fields: [eventTypeId], references: [id])
+  activites     EventActivites[]
+
+  @@map("events")
+}
+
+model EventActivites {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  images      String[] @default([])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  eventId     String   @map("event_id")
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_activities")
+}
+
+model EventType {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  event     Event?
+
+  @@map("event_types")
+}
+
+// model Media {
+//   id        String   @id @unique @default(uuid())
+//   model     String
+//   fileName      String        @map("file_name")
+//   originalName  String        @map("original_name")
+//   filePath      String        @map("file_path")
+//   fileUrl       String        @map("file_url")
+//   mimeType      String        @map("mime_type")
+//   fileSize      Int           @map("file_size")
+//   mediaType     MediaType     @map("media_type")
+//   width         Int?          // For images/videos
+//   height        Int?          // For images/videos
+//   duration      Int?          // For videos/audio in seconds
+//   thumbnail     String?       // Thumbnail URL for videos/documents
+//   alt           String?
+//   caption       String?
+//   metadata      Json?         // Additional metadata (EXIF, etc.)
+//   isActive      Boolean       @default(false) @map("is_active")
+//   createdAt     DateTime      @default(now()) @map("created_at")
+//   updatedAt     DateTime      @updatedAt @map("updated_at")
+
+//   @@map("media")
+// }
