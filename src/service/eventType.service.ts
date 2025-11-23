@@ -22,7 +22,7 @@ export const createEventTypeService = async (payload: EventTypePayload) => {
     }
 
     const eventType = await prisma.eventType.create({
-        data: { name },
+        data: payload,
     });
 
     return { eventType };
@@ -45,14 +45,14 @@ export const updateEventTypeService = async (id: string, payload: EventTypePaylo
 
     const eventType = await prisma.eventType.update({
         where: { id },
-        data: { name },
+        data: payload,
     });
 
     return { eventType };
 };
 
 export const getAllEventTypesService = async (query: EventTypeFilterQuery) => {
-    const { page = 1, limit = 10, search } = query;
+    const { page = 1, limit = 10, search, isActive } = query;
 
     let filterQuery: Prisma.EventTypeWhereInput = {};
 
@@ -63,6 +63,13 @@ export const getAllEventTypesService = async (query: EventTypeFilterQuery) => {
             OR: keywords.map((keyword) => ({
                 OR: [{ name: { contains: keyword, mode: 'insensitive' } }],
             })),
+        };
+    }
+
+    if (isActive !== undefined) {
+        filterQuery = {
+            ...filterQuery,
+            isActive,
         };
     }
 

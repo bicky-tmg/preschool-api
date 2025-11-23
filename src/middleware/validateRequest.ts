@@ -7,6 +7,13 @@ export const validateRequest =
     (req: Request, res: Response, next: NextFunction) => {
         try {
             const parsed = schema.parse(req[source]);
+            if (source === 'query') {
+                Object.defineProperty(req, 'query', {
+                    ...Object.getOwnPropertyDescriptor(req, 'query'),
+                    value: req.query,
+                    writable: true,
+                });
+            }
             Object.assign(req[source], parsed);
             next();
         } catch (error) {

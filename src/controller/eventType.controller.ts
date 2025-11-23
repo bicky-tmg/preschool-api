@@ -17,7 +17,7 @@ export const createEventType = catchAsync(async (req: Request, res: Response) =>
 export const updateEventType = catchAsync(async (req: Request, res: Response) => {
     const eventType = await updateEventTypeService(req.params.id!, req.body);
 
-    res.sendResponse(eventType, 'Event type updated successfully.', 200);
+    res.sendResponse(eventType, 'Event type updated successfully.');
 });
 
 export const getAllEventTypes = catchAsync(async (req: Request, res: Response) => {
@@ -35,5 +35,5 @@ export const getEventType = catchAsync(async (req: Request, res: Response) => {
 export const deleteEventType = catchAsync(async (req: Request, res: Response) => {
     await deleteEventTypeService(req.params.id!);
 
-    res.sendResponse(undefined, 'Event type deleted successfully.', 200);
+    res.sendResponse(undefined, 'Event type deleted successfully.');
 });
