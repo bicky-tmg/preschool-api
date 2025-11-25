@@ -24,6 +24,10 @@ export const eventFilterQuerySchema = z
         startDate: z.coerce.date().optional(),
         endDate: z.coerce.date().optional(),
         status: eventStatusSchema.default(EventStatus.SCHEDULED).optional(),
+        isActive: z
+            .enum(['true', 'false', '1', '0'])
+            .transform((val) => val === 'true' || val === '1')
+            .optional(),
     })
     .refine((data) => !data.startDate || !data.endDate || data.endDate >= data.startDate, {
         message: 'End date must be same or after start date',
@@ -67,6 +71,7 @@ export const eventSchema = z
         featuredImage: z.string().nullable().default(null),
         images: z.array(z.string()).default([]),
         eventType: z.string().min(1, 'Event type is required'),
+        isActive: z.boolean().default(true),
         activities: z.array(eventActivitiesSchema).default([]),
     })
     .refine((data) => data.endDate >= data.startDate, {

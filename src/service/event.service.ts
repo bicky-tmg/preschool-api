@@ -64,7 +64,7 @@ export const updateEventService = async (id: string, payload: EventPayload) => {
 };
 
 export const getAllEventsService = async (query: EventFilterQuery) => {
-    const { page = 1, limit = 10, search, startDate, endDate, status } = query;
+    const { page = 1, limit = 10, search, startDate, endDate, status, isActive } = query;
 
     let filterQuery: Prisma.EventWhereInput = {};
 
@@ -104,6 +104,10 @@ export const getAllEventsService = async (query: EventFilterQuery) => {
             ...filterQuery,
             endDate: { lte: new Date(endDate) },
         };
+    }
+
+    if (isActive !== undefined) {
+        filterQuery = { ...filterQuery, isActive };
     }
 
     if (status) {

@@ -67,10 +67,7 @@ export const getAllEventTypesService = async (query: EventTypeFilterQuery) => {
     }
 
     if (isActive !== undefined) {
-        filterQuery = {
-            ...filterQuery,
-            isActive,
-        };
+        filterQuery = { ...filterQuery, isActive };
     }
 
     const [eventTypes, total] = await Promise.all([

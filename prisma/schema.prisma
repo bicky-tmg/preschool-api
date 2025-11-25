@@ -32,6 +32,7 @@ model Event {
   id            String          @id @default(uuid())
   title         String
   description   String
+  isActive      Boolean         @default(true) @map("is_active")
   status        EventStatus     @default(SCHEDULED)
   startDate     DateTime        @map("start_date")
   endDate       DateTime        @map("end_date")

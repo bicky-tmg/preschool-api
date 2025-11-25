@@ -6,6 +6,7 @@ CREATE TABLE "events" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "is_active" BOOLEAN NOT NULL DEFAULT true,
     "status" "EventStatus" NOT NULL DEFAULT 'SCHEDULED',
     "start_date" TIMESTAMP(3) NOT NULL,
     "end_date" TIMESTAMP(3) NOT NULL,
