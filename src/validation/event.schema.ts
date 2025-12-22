@@ -34,15 +34,17 @@ export const eventFilterQuerySchema = z
         path: ['endDate'],
     });
 
-export const eventTypeFilterQuerySchema = z.object({
-    page: z.coerce.number().default(1),
-    limit: z.coerce.number().default(10),
-    search: z.string().trim().optional(),
-    isActive: z
-        .enum(['true', 'false', '1', '0'])
-        .transform((val) => val === 'true' || val === '1')
-        .optional(),
-});
+export const eventTypeFilterQuerySchema = z
+    .object({
+        page: z.coerce.number().default(1),
+        limit: z.coerce.number().default(10),
+        search: z.string().trim().optional(),
+        isActive: z
+            .enum(['true', 'false', '1', '0'])
+            .transform((val) => val === 'true' || val === '1')
+            .optional(),
+    })
+    .strip();
 
 export const eventSchema = z
     .object({

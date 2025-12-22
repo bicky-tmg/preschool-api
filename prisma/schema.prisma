@@ -20,14 +20,6 @@ enum EventStatus {
   CANCELLED
 }
 
-// enum MediaType {
-//   IMAGE
-//   VIDEO
-//   DOCUMENT
-//   AUDIO
-//   OTHER
-// }
-
 model Event {
   id            String          @id @default(uuid())
   title         String
@@ -82,26 +74,103 @@ model Faq {
   @@map("faqs")
 }
 
-// model Media {
-//   id        String   @id @unique @default(uuid())
-//   model     String
-//   fileName      String        @map("file_name")
-//   originalName  String        @map("original_name")
-//   filePath      String        @map("file_path")
-//   fileUrl       String        @map("file_url")
-//   mimeType      String        @map("mime_type")
-//   fileSize      Int           @map("file_size")
-//   mediaType     MediaType     @map("media_type")
-//   width         Int?          // For images/videos
-//   height        Int?          // For images/videos
-//   duration      Int?          // For videos/audio in seconds
-//   thumbnail     String?       // Thumbnail URL for videos/documents
-//   alt           String?
-//   caption       String?
-//   metadata      Json?         // Additional metadata (EXIF, etc.)
-//   isActive      Boolean       @default(false) @map("is_active")
-//   createdAt     DateTime      @default(now()) @map("created_at")
-//   updatedAt     DateTime      @updatedAt @map("updated_at")
+model ContentType {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  displayName String  @map("display_name")
+  description String?
 
-//   @@map("media")
-// }
+  fields   Field[]
+  contents Content[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("content_types")
+}
+
+model Field {
+  id           String    @id @default(uuid())
+  name         String
+  displayName  String    @map("display_name")
+  fieldType    FieldType @map("field_type")
+  isRequired   Boolean   @default(false) @map("is_required")
+  isUnique     Boolean   @default(false) @map("is_unique")
+  defaultValue Json?     @map("default_value")
+  validations  Json?
+  options      Json?
+  order        Int       @default(0)
+
+  contentTypeId String      @map("content_type_id")
+  contentType   ContentType @relation(fields: [contentTypeId], references: [id], onDelete: Cascade)
+
+  fieldValues FieldValue[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([contentTypeId, name])
+  @@index([contentTypeId])
+  @@map("fields")
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  RICHTEXT
+  NUMBER
+  BOOLEAN
+  DATE
+  DATETIME
+  EMAIL
+  URL
+  MEDIA
+  JSON
+  SELECT
+}
+
+model Content {
+  id          String        @id @default(uuid())
+  slug        String?
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?     @map("published_at")
+
+  contentTypeId String      @map("content_type_id")
+  contentType   ContentType @relation(fields: [contentTypeId], references: [id])
+
+  fieldValues FieldValue[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([contentTypeId, slug])
+  @@index([contentTypeId])
+  @@index([status])
+  @@map("contents")
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model FieldValue {
+  id String @id @default(uuid())
+
+  contentId String  @map("content_id")
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  fieldId String @map("field_id")
+  field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  value Json
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([contentId, fieldId])
+  @@index([contentId])
+  @@index([fieldId])
+  @@map("field_values")
+}
